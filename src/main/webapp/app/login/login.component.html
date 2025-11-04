@@ -1,0 +1,79 @@
+<div class="login-container">
+  <div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-lg-5 col-md-7 col-sm-10">
+      <div class="card shadow-lg">
+        <div class="card-body p-5">
+          <h1 class="text-center mb-4">LaunchDarkly Demo</h1>
+          <p class="text-center text-muted mb-4">Enter your email to begin</p>
+
+          @if (authenticationError()) {
+            <div class="alert alert-danger" data-cy="loginError">
+              <strong>Login failed!</strong> Please try again.
+            </div>
+          }
+
+          <form class="form" (ngSubmit)="login()" [formGroup]="loginForm">
+            <div class="mb-4">
+              <label class="form-label fw-bold" for="email">Email Address</label>
+              <input
+                type="email"
+                class="form-control form-control-lg"
+                name="email"
+                id="email"
+                placeholder="user@example.com"
+                formControlName="email"
+                data-cy="email"
+                [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+              />
+              @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                <div class="invalid-feedback">
+                  Please enter a valid email address
+                </div>
+              }
+            </div>
+
+            <div class="mb-4">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="beta"
+                  id="beta"
+                  formControlName="beta"
+                  data-cy="beta"
+                />
+                <label class="form-check-label" for="beta">
+                  <strong>Beta Access</strong>
+                  <small class="d-block text-muted">Enable early access features</small>
+                </label>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg w-100"
+              data-cy="submit"
+              [disabled]="loginForm.invalid || isLoading()"
+            >
+              @if (isLoading()) {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Loading...
+              } @else {
+                Continue
+              }
+            </button>
+          </form>
+
+          <div class="mt-4">
+            <h6 class="text-muted small">About This Demo:</h6>
+            <p class="small text-muted">
+              Your tier and features are controlled by LaunchDarkly feature flags.
+              The prefix assigned to your conversation ID depends on the rules configured in the 
+              <code>quick-test-conversation-prefix</code> flag.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

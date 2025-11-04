@@ -1,0 +1,16 @@
+{
+  "login": {
+    "title": "LaunchDarkly Demo Login",
+    "form": {
+      "email": "Email",
+      "email.placeholder": "your@email.com",
+      "beta": "Beta Early Access Program",
+      "button": "Continue"
+    },
+    "messages": {
+      "error": {
+        "authentication": "Login failed! Please try again."
+      }
+    }
+  }
+}

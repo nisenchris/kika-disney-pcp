@@ -1,0 +1,50 @@
+.login-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+
+  .card {
+    border: none;
+    border-radius: 1rem;
+  }
+
+  h1 {
+    color: #2d3748;
+    font-weight: 700;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      transform: none;
+    }
+  }
+
+  .form-control-lg {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+  }
+
+  code {
+    background-color: #f7fafc;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+}
+

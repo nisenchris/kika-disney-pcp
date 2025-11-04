@@ -1,0 +1,9 @@
+# ===================================================================
+# LaunchDarkly Configuration Example
+# Copy this configuration to your application-dev.yml file
+# ===================================================================
+
+launchdarkly:
+  sdk-key: YOUR_LAUNCHDARKLY_SERVER_SDK_KEY_HERE  # Get from LaunchDarkly: Account settings > Projects > [project] > Environments > [env] > SDK key
+  project-key: YOUR_PROJECT_KEY_HERE  # Get from LaunchDarkly: Account settings > Projects > [project] > Settings
+

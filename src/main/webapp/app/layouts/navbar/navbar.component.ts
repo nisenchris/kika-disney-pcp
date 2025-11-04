@@ -1,0 +1,52 @@
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import SharedModule from 'app/shared/shared.module';
+import { LaunchDarklyService, UserContext } from 'app/services/launchdarkly.service';
+
+@Component({
+  selector: 'jhi-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.scss',
+  imports: [RouterModule, SharedModule],
+})
+export default class NavbarComponent implements OnInit {
+  userContext = signal<UserContext | null>(null);
+  isNavbarCollapsed = signal(true);
+
+  private readonly ldService = inject(LaunchDarklyService);
+  private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.ldService.getUserContext().subscribe(context => {
+      this.userContext.set(context);
+    });
+  }
+
+  getTierBadgeClass(): string {
+    const prefix = this.userContext()?.prefix ?? '';
+    if (!prefix) return 'badge bg-secondary ms-2';
+    if (prefix === 'beta') return 'badge bg-secondary ms-2';
+    if (prefix === 'test') return 'badge bg-info ms-2';
+    if (prefix === 'premium') return 'badge bg-warning text-dark ms-2';
+    return 'badge bg-secondary ms-2';
+  }
+
+  getTierLabel(): string {
+    const prefix = this.userContext()?.prefix ?? '';
+    if (!prefix) return '';
+    return prefix.toUpperCase();
+  }
+
+  async logout(): Promise<void> {
+    await this.ldService.switchToAnonymous();
+    this.router.navigate(['/login']);
+  }
+
+  toggleNavbar(): void {
+    this.isNavbarCollapsed.update(val => !val);
+  }
+
+  collapseNavbar(): void {
+    this.isNavbarCollapsed.set(true);
+  }
+}

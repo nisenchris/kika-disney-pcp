@@ -1,0 +1,183 @@
+<div class="chat-container">
+  <div class="container-fluid h-100">
+    <div class="row h-100">
+      <!-- Sidebar with ConversationID Info -->
+      <div class="col-lg-3 col-md-4 sidebar p-4">
+        <h5>
+          <i class="fas fa-info-circle me-2"></i>
+          Session Info
+        </h5>
+        
+        <div class="info-card">
+          <div class="info-label">
+            <i class="fas fa-envelope me-1"></i>
+            Email
+          </div>
+          <div class="fw-bold">{{ userContext()?.email || 'Not logged in' }}</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">
+            <i class="fas fa-layer-group me-1"></i>
+            Tier
+          </div>
+          <div>
+            <span [class]="getTierBadgeClass()">{{ getTierLabel() || 'NONE' }}</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">
+            <i class="fas fa-comment-dots me-1"></i>
+            Conversation ID
+          </div>
+          <div class="conversation-id">
+            @if (prefix) {
+              <span class="prefix-highlight">{{ highlightPrefix(conversationId).prefix }}</span>
+              <span>{{ highlightPrefix(conversationId).rest }}</span>
+            } @else {
+              <span>{{ conversationId }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">
+            <i class="fas fa-flask me-1"></i>
+            Beta Attribute
+          </div>
+          <div>
+            @if (userContext()?.beta) {
+              <span class="badge bg-secondary">
+                <i class="fas fa-check me-1"></i>
+                Enabled
+              </span>
+            } @else {
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-times me-1"></i>
+                Disabled
+              </span>
+            }
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">
+            <i class="fas fa-microphone me-1"></i>
+            Backend Voice Flag
+          </div>
+          <div>
+            @if (backendVoiceEnabled === null) {
+              <span class="badge bg-secondary">
+                <i class="fas fa-clock me-1"></i>
+                Waiting...
+              </span>
+            } @else if (backendVoiceEnabled) {
+              <span class="badge bg-success">
+                <i class="fas fa-check me-1"></i>
+                Enabled
+              </span>
+            } @else {
+              <span class="badge bg-danger">
+                <i class="fas fa-times me-1"></i>
+                Disabled
+              </span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Chat Area -->
+      <div class="col-lg-9 col-md-8 chat-main">
+        <div class="chat-header p-3 border-bottom">
+          <h3 class="mb-0">LaunchDarkly Demo Chat</h3>
+          <p class="text-muted mb-0 small">Demonstrating flag coordination between frontend and backend</p>
+        </div>
+
+        <div class="messages-container p-4">
+          @if (messages().length === 0) {
+            <div class="empty-state text-center text-muted py-5">
+              <i class="fas fa-comments fa-3x mb-3 opacity-25"></i>
+              <p>Send a message to start the conversation</p>
+            </div>
+          }
+
+          @for (msg of messages(); track msg.timestamp) {
+            <div class="message-group mb-4">
+              <!-- User Message -->
+              <div class="user-message mb-2">
+                <div class="message-bubble user-bubble">
+                  {{ msg.userMessage }}
+                </div>
+              </div>
+
+              <!-- Bot Response -->
+              <div class="bot-message">
+                <div class="message-bubble bot-bubble">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <strong>Response</strong>
+                    <span class="text-muted small">{{ formatTimestamp(msg.timestamp) }}</span>
+                  </div>
+                  
+                  <p class="mb-3">{{ msg.textResponse }}</p>
+
+                  <!-- Backend Flag Indicator -->
+                  <div class="mb-2">
+                    <span [class]="getBackendFlagBadgeClass(msg.backendFlagResult)">
+                      {{ getBackendFlagLabel(msg.backendFlagResult) }}
+                    </span>
+                  </div>
+
+                  <!-- Audio Player (if voiceAudioUrl present) -->
+                  @if (msg.voiceAudioUrl) {
+                    <div class="audio-player mt-3 p-3 bg-light rounded">
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-volume-up me-2 text-success"></i>
+                        <div class="flex-grow-1">
+                          <audio controls class="w-100">
+                            <source [src]="msg.voiceAudioUrl" type="audio/mpeg" />
+                            Your browser does not support the audio element.
+                          </audio>
+                        </div>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="mt-2 small text-muted">
+                      <i class="fas fa-info-circle me-1"></i>
+                      Voice audio not available for this tier
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="chat-input-container p-3 border-top">
+          <form (ngSubmit)="sendMessage()" class="d-flex gap-2">
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              placeholder="Type your message..."
+              [(ngModel)]="messageInput"
+              name="message"
+              [disabled]="isSending()"
+            />
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg px-4"
+              [disabled]="!messageInput || isSending()"
+            >
+              @if (isSending()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              } @else {
+                <i class="fas fa-paper-plane"></i>
+              }
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
