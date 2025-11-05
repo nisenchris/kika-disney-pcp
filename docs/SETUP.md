@@ -63,19 +63,19 @@ launchdarkly:
 
 ## Required Feature Flags
 
-You need to create two feature flags in your LaunchDarkly project. See `LAUNCHDARKLY_FLAGS.md` for detailed flag configuration.
+You need to create two feature flags in your LaunchDarkly project. See `FLAGS.md` for detailed flag configuration.
 
-### Frontend Flag: `conversation-prefix`
+### Frontend Flag: `quick-test-conversation-prefix`
 
 - **Type:** String (multi-variate)
-- **Client-side SDK:** Enabled
+- **Client-side SDK:** ✅ Enabled (MUST be enabled)
 - **Default value:** `""` (empty string)
 - **Variations:** `beta`, `test`, `premium`, `""` (empty)
 
-### Backend Flag: `voice-chat-enabled`
+### Backend Flag: `quick-test-voice-chat-enabled`
 
 - **Type:** Boolean
-- **Server-side SDK:** Enabled
+- **Server-side SDK:** ✅ Enabled
 - **Default value:** `false`
 
 ## Demo Scenarios
@@ -200,5 +200,6 @@ For issues related to:
 - **Application code:** Check the implementation files
 - **LaunchDarkly setup:** Consult LaunchDarkly support
 - **Flag configuration:** See `LAUNCHDARKLY_FLAGS.md`
+
 
 

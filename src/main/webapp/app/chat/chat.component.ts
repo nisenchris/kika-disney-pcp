@@ -7,6 +7,26 @@ import { LaunchDarklyService, UserContext } from 'app/services/launchdarkly.serv
 import { ChatApiService, ChatResponse } from 'app/services/chat-api.service';
 import AudioVisualizerComponent from './audio-visualizer/audio-visualizer.component';
 
+/**
+ * 🎯 DEMO: Chat Component
+ * 
+ * This component demonstrates the complete flag coordination flow:
+ * 
+ * 1. Displays user context from FLAG #1 (quick-test-conversation-prefix):
+ *    - User email and beta status
+ *    - Assigned tier prefix (premium, test, beta, or none)
+ *    - Generated conversation ID
+ * 
+ * 2. Sends messages to backend:
+ *    - Conversation ID automatically added via HTTP interceptor as X-Conversation-ID header
+ *    - Backend evaluates FLAG #2 (quick-test-voice-chat-enabled)
+ * 
+ * 3. Displays backend flag results:
+ *    - Shows whether voice is enabled/disabled for this tier
+ *    - Displays audio visualizer if voice is enabled
+ *    - Shows placeholder message if voice is disabled
+ */
+
 interface ChatMessage extends ChatResponse {
   userMessage: string;
   isUser: boolean;
@@ -20,10 +40,14 @@ interface ChatMessage extends ChatResponse {
   styleUrl: './chat.component.scss',
 })
 export default class ChatComponent implements OnInit {
+  // User context from FLAG #1 evaluation (quick-test-conversation-prefix)
   userContext = signal<UserContext | null>(null);
+  
   messages = signal<ChatMessage[]>([]);
-  messageInput = ''; // Changed from signal to regular string for ngModel
+  messageInput = '';
   isSending = signal(false);
+  
+  // Result from FLAG #2 evaluation (quick-test-voice-chat-enabled) - returned by backend
   lastBackendFlagResult = signal<boolean | null>(null);
 
   private readonly ldService = inject(LaunchDarklyService);
@@ -33,10 +57,12 @@ export default class ChatComponent implements OnInit {
   ngOnInit(): void {
     const context = this.ldService.getCurrentUserContext();
     if (!context?.email) {
+      // No user logged in - redirect to login
       this.router.navigate(['/login']);
       return;
     }
     this.userContext.set(context);
+    console.log('💼 User context loaded:', context);
   }
 
   get conversationId(): string {
@@ -66,6 +92,16 @@ export default class ChatComponent implements OnInit {
     return prefix.toUpperCase();
   }
 
+  /**
+   * 🎯 DEMO: Send Message Flow
+   * 
+   * What happens when user sends a message:
+   * 1. ConversationIdInterceptor automatically adds X-Conversation-ID header
+   * 2. Backend receives: header + message (NOT user email!)
+   * 3. Backend evaluates FLAG #2 (quick-test-voice-chat-enabled)
+   * 4. Response includes flag result and optional voice audio URL
+   * 5. Frontend displays the result in the sidebar and message
+   */
   async sendMessage(): Promise<void> {
     const message = this.messageInput.trim();
     if (!message || this.isSending()) return;
@@ -73,13 +109,15 @@ export default class ChatComponent implements OnInit {
     this.isSending.set(true);
 
     try {
-      // conversationID is automatically added as X-Conversation-ID header by ConversationIdInterceptor
+      // 🎯 DEMO: Note that we only send the message!
+      // The conversationID is automatically added as X-Conversation-ID header by ConversationIdInterceptor
       const response = await firstValueFrom(
         this.chatService.sendMessage({
-          message,
+          message, // Only business data in the request body
         }),
       );
 
+      // Add message to chat history
       this.messages.update(msgs => [
         ...msgs,
         {
@@ -88,11 +126,16 @@ export default class ChatComponent implements OnInit {
           isUser: false,
         },
       ]);
-      // Update the backend flag result from the response
+      
+      // 🎯 DEMO: Update the sidebar with backend flag result
       this.lastBackendFlagResult.set(response.backendFlagResult);
+      
+      console.log('📥 Received response - Backend voice flag:', response.backendFlagResult);
+      console.log('🎵 Voice audio URL:', response.voiceAudioUrl || '(none)');
 
       this.messageInput = '';
     } catch (error) {
+      console.error('❌ Failed to send message:', error);
       alert('Failed to send message. Please try again.');
     } finally {
       this.isSending.set(false);

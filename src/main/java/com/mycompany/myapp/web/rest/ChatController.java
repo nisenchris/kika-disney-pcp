@@ -10,7 +10,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST controller for handling chat messages and demonstrating LaunchDarkly flag evaluation.
+ * 🎯 DEMO: Chat API Controller
+ * 
+ * This controller demonstrates how the backend:
+ * 1. Receives conversation ID via X-Conversation-ID header (NOT in request body)
+ * 2. Evaluates the 'quick-test-voice-chat-enabled' flag using that conversation ID
+ * 3. Returns voice audio URL only if the flag is enabled for that tier
+ * 
+ * KEY ARCHITECTURE:
+ * - Frontend and backend are COMPLETELY SEPARATE
+ * - Backend NEVER sees user email or personal data
+ * - Only receives conversation ID like "premium_conv_abc12345"
+ * - LaunchDarkly targeting rules determine features based on ID pattern
  */
 @RestController
 @RequestMapping("/api/chat")
@@ -21,13 +32,11 @@ public class ChatController {
     /**
      * Demo audio URL for the animated audio visualizer.
      * 
-     * Using a local audio file served by the application.
-     * Relative path - no CORS issues since it's served from the same origin.
+     * In production, this would be a real audio URL from a TTS service.
+     * For demo purposes, we use a local audio file served by the application.
      * 
-     * Audio file location: src/main/webapp/content/audio/welcome-back-pal-ready-for-some-fun.mp3
-     * 
-     * The frontend AudioVisualizerComponent will use Web Audio API to create a 
-     * ChatGPT-style animated orb that pulses in sync with the audio playback.
+     * Audio file: src/main/webapp/content/audio/welcome-back-pal-ready-for-some-fun.mp3
+     * The frontend AudioVisualizerComponent creates a ChatGPT-style animated orb.
      */
     private static final String MOCK_AUDIO_URL = "/content/audio/welcome-back-pal-ready-for-some-fun.mp3";
 
@@ -38,33 +47,43 @@ public class ChatController {
     }
 
     /**
+     * 🎯 DEMO ENDPOINT: Send Chat Message
+     * 
      * POST /api/chat/message : Process a chat message and return response with voice audio if flag is enabled.
-     *
-     * @param conversationID the conversation ID from X-Conversation-ID header
-     * @param request the chat request containing the message
-     * @return the chat response with text, optional audio URL, and flag evaluation result
+     * 
+     * Flow:
+     * 1. Extract conversation ID from X-Conversation-ID header (automatically added by frontend interceptor)
+     * 2. Evaluate 'quick-test-voice-chat-enabled' flag using conversation ID as context
+     * 3. Include voice audio URL ONLY if flag returns true
+     * 4. Return response to frontend with flag evaluation result
+     * 
+     * @param conversationID Conversation ID from X-Conversation-ID header (e.g., "premium_conv_abc123")
+     * @param request The chat request containing only the message (business data)
+     * @return ChatResponse with text, optional audio URL, and flag evaluation result
      */
     @PostMapping("/message")
     public ResponseEntity<ChatResponse> sendMessage(
         @RequestHeader(value = "X-Conversation-ID", required = false) String conversationID,
         @Valid @RequestBody ChatRequest request
     ) {
-        log.info("Received chat message from conversationID: {}", conversationID);
-        log.debug("Message content: {}", request.getMessage());
+        log.info("📨 Received chat message");
+        log.info("📋 Conversation ID from header: {}", conversationID != null ? conversationID : "(none)");
+        log.debug("💬 Message content: {}", request.getMessage());
 
-        // Handle missing conversation ID
+        // Handle missing conversation ID (graceful degradation)
         if (conversationID == null || conversationID.isEmpty()) {
-            log.warn("No X-Conversation-ID header provided, using anonymous context");
+            log.warn("⚠️ No X-Conversation-ID header provided, using 'anonymous' context");
             conversationID = "anonymous";
         }
 
-        // Evaluate voice-chat-enabled flag using conversationID as context key
+        // 🎯 FLAG #2: Evaluate 'quick-test-voice-chat-enabled' flag
         boolean voiceEnabled = launchDarklyService.evaluateVoiceChat(conversationID);
 
         // Prepare response
         String textResponse = "Hi! How can I help you today? " +
             "I'm demonstrating LaunchDarkly's feature flag coordination between frontend and backend.";
 
+        // 🎯 Include voice audio URL ONLY if flag is enabled
         String voiceAudioUrl = voiceEnabled ? MOCK_AUDIO_URL : null;
 
         long timestamp = System.currentTimeMillis();
@@ -72,19 +91,13 @@ public class ChatController {
         ChatResponse response = new ChatResponse(
             textResponse,
             voiceAudioUrl,
-            voiceEnabled,
+            voiceEnabled,  // Include flag result so frontend can display it
             conversationID,
             timestamp
         );
 
-        log.info("Sending response for conversationID: {} - Voice enabled: {}", 
-            conversationID, voiceEnabled);
-
-        if (voiceEnabled) {
-            log.info("Voice audio URL included in response");
-        } else {
-            log.info("Voice audio URL NOT included (flag disabled or tier not eligible)");
-        }
+        log.info("📤 Sending response - Voice enabled: {} - Audio URL: {}", 
+            voiceEnabled, voiceEnabled ? "included" : "NOT included");
 
         return ResponseEntity.ok(response);
     }

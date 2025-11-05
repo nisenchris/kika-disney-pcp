@@ -4,11 +4,25 @@ import { nanoid } from 'nanoid';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'environments/environment';
 
+/**
+ * 🎯 DEMO: Frontend LaunchDarkly Integration
+ * 
+ * This service demonstrates FLAG #1: quick-test-conversation-prefix
+ * 
+ * What it does:
+ * - Evaluates the 'quick-test-conversation-prefix' flag based on user attributes (email, beta)
+ * - Returns a tier prefix: "premium", "test", "beta", or "" (empty string)
+ * - Generates a conversation ID like: "premium_conv_abc12345"
+ * - This ID is sent to the backend via HTTP header (X-Conversation-ID)
+ * 
+ * The backend NEVER sees user email - only the conversation ID!
+ */
+
 export interface UserContext {
   email: string;
   beta: boolean;
-  prefix: string;
-  conversationId: string;
+  prefix: string; // Result of 'quick-test-conversation-prefix' flag
+  conversationId: string; // Generated ID with prefix: "{prefix}_conv_{uniqueId}"
 }
 
 @Injectable({
@@ -26,9 +40,13 @@ export class LaunchDarklyService {
     return this.userContext$.value;
   }
 
+  /**
+   * 🎯 DEMO STEP 1: User Login
+   * Initializes LaunchDarkly and evaluates the conversation-prefix flag
+   */
   async initialize(email: string, beta: boolean): Promise<void> {
     if (!environment.ldClientId) {
-      // Without LaunchDarkly, use no prefix (anonymous user)
+      console.warn('⚠️ LaunchDarkly client ID not configured. Using default (no prefix).');
       const prefix = '';
       const conversationId = this.generateConversationId(prefix);
       this.userContext$.next({ email, beta, prefix, conversationId });
@@ -36,7 +54,7 @@ export class LaunchDarklyService {
     }
 
     try {
-      // Create LaunchDarkly user context with email and beta attributes
+      // Create user context for LaunchDarkly (client-side flag evaluation)
       const user: LDClient.LDContext = {
         kind: 'user',
         key: email,
@@ -44,19 +62,21 @@ export class LaunchDarklyService {
         beta,
       };
 
+      console.log('🚀 Initializing LaunchDarkly with user context:', { email, beta });
       this.ldClient = LDClient.initialize(environment.ldClientId, user);
-
       await this.ldClient.waitForInitialization();
 
-      // Evaluate quick-test-conversation-prefix flag
-      // The flag will return whatever prefix YOU configure in LaunchDarkly rules
-      // Examples: "test", "premium", "beta", "internal", or "" (empty string)
+      // 🎯 FLAG #1: Evaluate 'quick-test-conversation-prefix'
+      // This determines the tier based on LaunchDarkly targeting rules
       const prefix = this.ldClient.variation('quick-test-conversation-prefix', '');
       const conversationId = this.generateConversationId(prefix);
 
+      console.log('✅ Flag evaluated: quick-test-conversation-prefix =', prefix || '(empty)');
+      console.log('📋 Generated conversation ID:', conversationId);
+
       this.userContext$.next({ email, beta, prefix, conversationId });
     } catch (error) {
-      // On error, use no prefix
+      console.error('❌ Error initializing LaunchDarkly:', error);
       const prefix = '';
       const conversationId = this.generateConversationId(prefix);
       this.userContext$.next({ email, beta, prefix, conversationId });
@@ -74,6 +94,9 @@ export class LaunchDarklyService {
     }
   }
 
+  /**
+   * Returns the current conversation prefix from the flag evaluation
+   */
   getConversationPrefix(): string {
     if (!this.ldClient) {
       return this.userContext$.value?.prefix ?? '';
@@ -81,14 +104,26 @@ export class LaunchDarklyService {
     return this.ldClient.variation('quick-test-conversation-prefix', '') as string;
   }
 
+  /**
+   * Optional: Client-side voice flag (not used in this demo)
+   * This demo uses SERVER-SIDE flag evaluation instead (see backend)
+   */
   isVoiceEnabled(): boolean {
     if (!this.ldClient) {
       return false;
     }
-    // This would be a client-side flag if needed
     return this.ldClient.variation('quick-test-voice-chat-enabled-client', false) as boolean;
   }
 
+  /**
+   * 🎯 DEMO: Conversation ID Generation
+   * Creates a unique conversation ID with the tier prefix
+   * 
+   * Examples:
+   * - prefix="premium" → "premium_conv_a1b2c3d4"
+   * - prefix="test"    → "test_conv_x9y8z7w6"
+   * - prefix=""        → "conv_m5n4o3p2" (anonymous)
+   */
   private generateConversationId(prefix: string): string {
     const uniqueId = nanoid(8);
     if (prefix) {

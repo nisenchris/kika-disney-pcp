@@ -1,6 +1,12 @@
 # LaunchDarkly Flag Configuration
 
-This document details the feature flags required for the Disney Demo application.
+This document details the feature flags required for the quick-test demo application.
+
+## 🎯 Demo Overview
+
+This demo shows how to coordinate feature flags between frontend and backend using LaunchDarkly, while maintaining **complete separation** between the two systems.
+
+**Key Concept:** The frontend generates a conversation ID with a tier prefix, and the backend uses that ID (not user data) to evaluate features.
 
 ## Flag Creation
 
@@ -8,14 +14,14 @@ This document details the feature flags required for the Disney Demo application
 
 ## Required Flags
 
-### 1. Frontend Flag: `conversation-prefix`
+### 1. Frontend Flag: `quick-test-conversation-prefix`
 
-**Purpose:** Determines the tier prefix added to conversation IDs based on user attributes.
+**Purpose:** Determines the tier prefix added to conversation IDs based on user attributes (email, beta).
 
 #### Configuration
 
-- **Flag Key:** `conversation-prefix`
-- **Name:** Conversation Prefix
+- **Flag Key:** `quick-test-conversation-prefix`
+- **Name:** Quick Test Conversation Prefix
 - **Type:** String (multi-variate flag)
 - **Client-side SDK:** ✅ Enabled (MUST be enabled)
 - **Description:** Returns the tier prefix to prepend to conversation IDs (beta, test, premium, or empty string)
@@ -68,14 +74,14 @@ Default:
 
 ---
 
-### 2. Backend Flag: `voice-chat-enabled`
+### 2. Backend Flag: `quick-test-voice-chat-enabled`
 
 **Purpose:** Controls whether voice audio URLs are included in chat responses based on conversation tier.
 
 #### Configuration
 
-- **Flag Key:** `voice-chat-enabled`
-- **Name:** Voice Chat Enabled
+- **Flag Key:** `quick-test-voice-chat-enabled`
+- **Name:** Quick Test Voice Chat Enabled
 - **Type:** Boolean
 - **Client-side SDK:** ❌ Disabled (server-side only)
 - **Description:** Enables voice audio responses for eligible conversation tiers
@@ -136,7 +142,7 @@ Matches:
 1. **User Login (Frontend)**
    - User enters email and beta checkbox
    - Frontend creates user context: `{ kind: 'user', key: email, email: email, beta: boolean }`
-   - Frontend evaluates `conversation-prefix` flag
+   - Frontend evaluates `quick-test-conversation-prefix` flag
    - Returns prefix: `"beta"`, `"test"`, `"premium"`, or `""` (empty)
 
 2. **Conversation ID Generation (Frontend)**
@@ -144,12 +150,13 @@ Matches:
    - If empty prefix: `conv_{shortId}` (e.g., `conv_x9y8z1a2`)
 
 3. **Message Sent to Backend**
-   - Payload: `{ conversationID, message }`
-   - Backend receives only the conversation ID string
+   - Header: `X-Conversation-ID: {conversationID}`
+   - Payload: `{ message }` (only business data)
+   - Backend receives only the conversation ID string (NEVER user email!)
 
 4. **Backend Flag Evaluation**
    - Backend creates context: `{ kind: 'conversation', key: conversationID }`
-   - Backend evaluates `voice-chat-enabled` flag
+   - Backend evaluates `quick-test-voice-chat-enabled` flag
    - Returns boolean based on conversation ID pattern
 
 5. **Response Coordination**
@@ -171,7 +178,7 @@ The **conversation ID itself carries the tier information** through its prefix. 
 2. **Use the "Test" tab**
 3. **Enter test contexts:**
 
-#### Test `conversation-prefix` Flag
+#### Test `quick-test-conversation-prefix` Flag
 
 ```json
 {
@@ -184,7 +191,7 @@ The **conversation ID itself carries the tier information** through its prefix. 
 
 Expected result: `"premium"`
 
-#### Test `voice-chat-enabled` Flag
+#### Test `quick-test-voice-chat-enabled` Flag
 
 ```json
 {
@@ -270,12 +277,12 @@ When you're ready to create the flags, provide your LaunchDarkly project key and
 Example command (will be executed when you provide project key):
 
 ```
-Create flag: conversation-prefix
+Create flag: quick-test-conversation-prefix
   - Type: multivariate string
   - Variations: beta, test, premium, ""
   - Default: ""
   
-Create flag: voice-chat-enabled
+Create flag: quick-test-voice-chat-enabled
   - Type: boolean
   - Variations: true, false
   - Default: false
@@ -287,17 +294,19 @@ Create flag: voice-chat-enabled
 
 ### Frontend Flag Not Working
 
-- ✅ Verify flag key is exactly `conversation-prefix`
+- ✅ Verify flag key is exactly `quick-test-conversation-prefix`
 - ✅ Ensure flag is toggled ON in LaunchDarkly
-- ✅ Check Client-side SDK is enabled
+- ✅ Check Client-side SDK is enabled for this flag
 - ✅ Verify context has correct attributes (email, beta)
+- ✅ Check browser console for LaunchDarkly initialization logs
 
 ### Backend Flag Not Working
 
-- ✅ Verify flag key is exactly `voice-chat-enabled`
+- ✅ Verify flag key is exactly `quick-test-voice-chat-enabled`
 - ✅ Check context kind is "conversation" not "user"
-- ✅ Ensure conversation ID format is correct
+- ✅ Ensure conversation ID format is correct (e.g., "premium_conv_abc123")
 - ✅ Verify targeting rules match your conversation ID patterns
+- ✅ Check backend logs for flag evaluation messages
 
 ### Flags Return Default Values
 
@@ -314,5 +323,6 @@ Create flag: voice-chat-enabled
 - [Targeting Rules](https://docs.launchdarkly.com/home/flags/targeting-rules)
 - [Contexts and Segments](https://docs.launchdarkly.com/home/contexts)
 - [Custom Contexts](https://docs.launchdarkly.com/home/contexts/custom-contexts)
+
 
 

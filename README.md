@@ -1,10 +1,12 @@
-# Kika Disney PCP
+# LaunchDarkly Feature Flag Coordination Demo
 
-A JHipster-based chat application demonstrating LaunchDarkly feature flags with context-based targeting patterns.
+A demo application showcasing how to coordinate LaunchDarkly feature flags between frontend and backend systems while maintaining complete data separation.
 
 ## 🎯 Overview
 
-This is a proof-of-concept application showcasing how LaunchDarkly feature flags can coordinate between frontend and backend using conversation IDs as context keys. The application demonstrates tier-based feature rollout without requiring the backend to know user details.
+This application demonstrates a powerful pattern: **frontend and backend systems coordinating features through LaunchDarkly flags without sharing user data.**
+
+**Key Concept:** The frontend evaluates a user-based flag to generate a tier-prefixed conversation ID (e.g., `premium_conv_abc123`). The backend receives only this ID via HTTP header and evaluates its own flag based on the ID pattern - never seeing the user's email or personal information.
 
 ## 🚀 Quick Start
 
@@ -28,31 +30,59 @@ This is a proof-of-concept application showcasing how LaunchDarkly feature flags
 
 Access the application at [http://localhost:4200](http://localhost:4200)
 
+## 🎯 Two Feature Flags Demonstrated
+
+### FLAG #1: `quick-test-conversation-prefix` (Frontend)
+- **Evaluated by:** Frontend LaunchDarkly SDK (client-side)
+- **Context:** User (email, beta status)
+- **Returns:** Tier prefix string ("premium", "test", "beta", or "")
+- **Purpose:** Generates conversation ID with tier embedded in the prefix
+
+### FLAG #2: `quick-test-voice-chat-enabled` (Backend)
+- **Evaluated by:** Backend LaunchDarkly SDK (server-side)
+- **Context:** Conversation (conversation ID pattern)
+- **Returns:** Boolean (true = voice enabled, false = disabled)
+- **Purpose:** Determines if voice audio should be included in chat responses
+
 ## 📋 Key Features
 
-- **Chat Interface**: Simple chat UI demonstrating feature flag coordination
-- **LaunchDarkly Integration**: 
-  - Frontend evaluates user-based flags to determine tier
-  - Backend evaluates conversation-based flags for features
-  - No user data required by backend
-- **Tier System**: Premium, Test, Beta, and Anonymous user tiers
-- **Clean Architecture**: Separation of concerns between frontend and backend contexts
+- **Complete Data Separation**: Backend never sees user email - only conversation ID
+- **HTTP Header Pattern**: Conversation ID passed via `X-Conversation-ID` header
+- **Automatic Injection**: HTTP interceptor handles header addition
+- **Visual Flag Indicators**: UI shows both frontend and backend flag results
+- **Clean Architecture**: Each system evaluates its own flags independently
 
-## 🏗️ Architecture
+## 🏗️ Architecture Flow
 
 ```
-Frontend (Angular) → Evaluates user flags → Generates conversation ID with tier prefix
-                                              ↓
-Backend (Spring Boot) → Receives conversation ID → Evaluates conversation flags → Returns features
+1. User Login
+   └─> Frontend evaluates FLAG #1 (quick-test-conversation-prefix)
+       └─> Returns tier prefix based on user attributes
+           └─> Generates conversation ID: "premium_conv_abc123"
+
+2. User Sends Message
+   └─> HTTP Interceptor adds X-Conversation-ID header automatically
+       └─> Request sent to backend with conversation ID in header
+           └─> Backend extracts conversation ID from header
+
+3. Backend Processing
+   └─> Backend evaluates FLAG #2 (quick-test-voice-chat-enabled)
+       └─> Uses conversation ID as context key
+           └─> Returns true/false based on ID pattern
+               └─> Conditionally includes voice audio URL
+
+4. Frontend Display
+   └─> Shows flag results in UI
+       └─> Displays audio visualizer if voice enabled
 ```
 
 ## 📚 Documentation
 
-Detailed documentation has been organized in the `docs/` folder:
+**Essential docs for your demo:**
 
-- **docs/SETUP.md** - Complete LaunchDarkly setup instructions
-- **docs/FLAGS.md** - Flag configuration and targeting rules
-- **docs/ARCHITECTURE.md** - Technical implementation details
+- **📖 [DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)** ⭐ - Complete live demo script with talking points
+- **🚩 [FLAGS.md](docs/FLAGS.md)** - Flag configuration and targeting rules
+- **⚙️ [SETUP.md](docs/SETUP.md)** - LaunchDarkly setup instructions
 
 ## 🛠️ Technology Stack
 
@@ -85,19 +115,21 @@ java -jar target/*.jar
 ./npmw test
 ```
 
-## 📝 Development Notes
+## 🎤 Giving the Demo
 
-This application was generated using JHipster 8.11.0 and customized to demonstrate LaunchDarkly integration patterns. The original authentication system was simplified to a mock login for demo purposes.
+See **[docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)** for a complete 15-20 minute demo presentation including:
+- Pre-demo setup checklist
+- Step-by-step walkthrough with talking points
+- What to show in console, network tab, and logs
+- Code file presentation order
+- Q&A key points
 
-## 🔗 Links
+## 🔗 Resources
 
-- [JHipster Documentation](https://www.jhipster.tech/documentation-archive/v8.11.0)
 - [LaunchDarkly Documentation](https://docs.launchdarkly.com)
-
-## 📄 License
-
-UNLICENSED - Internal use only
+- [LaunchDarkly Contexts](https://docs.launchdarkly.com/home/contexts)
+- [Feature Flag Best Practices](https://docs.launchdarkly.com/guides/flags/creating-flags)
 
 ---
 
-**Note**: This is a demonstration application for understanding LaunchDarkly context-based feature flagging patterns.
+**This is a demonstration application showcasing LaunchDarkly feature flag coordination patterns with privacy-first architecture.**
