@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { LaunchDarklyService, UserContext } from 'app/services/launchdarkly.service';
 import { ChatApiService, ChatResponse } from 'app/services/chat-api.service';
+import AudioVisualizerComponent from './audio-visualizer/audio-visualizer.component';
 
 interface ChatMessage extends ChatResponse {
   userMessage: string;
@@ -14,7 +15,7 @@ interface ChatMessage extends ChatResponse {
 @Component({
   selector: 'jhi-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AudioVisualizerComponent],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
 })

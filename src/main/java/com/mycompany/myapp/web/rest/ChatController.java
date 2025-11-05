@@ -17,7 +17,19 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
 
     private static final Logger log = LoggerFactory.getLogger(ChatController.class);
-    private static final String MOCK_AUDIO_URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+    
+    /**
+     * Demo audio URL for the animated audio visualizer.
+     * 
+     * Using a local audio file served by the application.
+     * Relative path - no CORS issues since it's served from the same origin.
+     * 
+     * Audio file location: src/main/webapp/content/audio/welcome-back-pal-ready-for-some-fun.mp3
+     * 
+     * The frontend AudioVisualizerComponent will use Web Audio API to create a 
+     * ChatGPT-style animated orb that pulses in sync with the audio playback.
+     */
+    private static final String MOCK_AUDIO_URL = "/content/audio/welcome-back-pal-ready-for-some-fun.mp3";
 
     private final LaunchDarklyService launchDarklyService;
 

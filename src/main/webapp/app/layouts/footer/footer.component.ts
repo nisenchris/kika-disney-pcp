@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
-import { TranslateDirective } from 'app/shared/language';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'jhi-footer',
   templateUrl: './footer.component.html',
-  imports: [TranslateDirective],
+  styleUrl: './footer.component.scss',
+  standalone: true,
+  imports: [CommonModule],
 })
-export default class FooterComponent {}
+export default class FooterComponent {
+  currentYear = new Date().getFullYear();
+}

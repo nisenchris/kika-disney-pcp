@@ -22,37 +22,6 @@
 
     <div class="collapse navbar-collapse" [class.show]="!isNavbarCollapsed()">
       <ul class="navbar-nav ms-auto align-items-lg-center gap-2 gap-lg-4">
-        <li class="nav-item">
-          <a class="nav-link nav-pill" routerLink="/chat" (click)="collapseNavbar()">
-            <i class="fas fa-comments me-2"></i>
-            Chat Studio
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a
-            class="nav-link nav-pill"
-            href="https://disneyworld.disney.go.com/help/"
-            target="_blank"
-            rel="noopener"
-          >
-            <i class="fas fa-book me-2"></i>
-            Help Center
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <button
-            class="btn btn-theme-toggle"
-            type="button"
-            (click)="toggleTheme()"
-            [attr.aria-pressed]="isDarkMode()"
-          >
-            <i class="me-2" [ngClass]="getThemeToggleIcon()"></i>
-            {{ getThemeToggleLabel() }}
-          </button>
-        </li>
-
         @if (userContext()?.email) {
           <li class="nav-item nav-user">
             <div class="user-chip">

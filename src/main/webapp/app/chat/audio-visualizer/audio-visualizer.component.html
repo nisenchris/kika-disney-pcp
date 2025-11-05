@@ -1,0 +1,51 @@
+<div class="audio-visualizer" (click)="togglePlayback()">
+  <div class="visualizer-icon">
+    <!-- SVG visualization with pulse rings -->
+    <svg class="visualizer-svg" viewBox="0 0 100 100">
+      <!-- Outer pulse rings (animated based on audio amplitude) -->
+      <circle
+        cx="50"
+        cy="50"
+        r="35"
+        class="pulse-ring pulse-ring--3"
+        [style.transform]="'scale(' + getRingScale(3) + ')'"
+        [style.opacity]="getRingOpacity(3)"
+      />
+      <circle
+        cx="50"
+        cy="50"
+        r="35"
+        class="pulse-ring pulse-ring--2"
+        [style.transform]="'scale(' + getRingScale(2) + ')'"
+        [style.opacity]="getRingOpacity(2)"
+      />
+      <circle
+        cx="50"
+        cy="50"
+        r="35"
+        class="pulse-ring pulse-ring--1"
+        [style.transform]="'scale(' + getRingScale(1) + ')'"
+        [style.opacity]="getRingOpacity(1)"
+      />
+
+      <!-- Base orb -->
+      <circle cx="50" cy="50" r="35" class="base-orb" />
+
+      <!-- Play/Pause icon overlay -->
+      <g class="playback-icon">
+        @if (!isPlaying()) {
+          <!-- Play icon (triangle) -->
+          <path d="M 40,35 L 40,65 L 65,50 Z" class="icon-shape" />
+        } @else {
+          <!-- Pause icon (two bars) -->
+          <rect x="38" y="35" width="8" height="30" class="icon-shape" />
+          <rect x="54" y="35" width="8" height="30" class="icon-shape" />
+        }
+      </g>
+    </svg>
+  </div>
+
+  <!-- Hidden audio element -->
+  <audio #audioElement [src]="audioUrl" preload="auto" crossorigin="anonymous"></audio>
+</div>
+

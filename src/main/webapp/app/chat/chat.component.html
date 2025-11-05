@@ -138,11 +138,7 @@
 
                     @if (msg.voiceAudioUrl) {
                       <div class="audio-card">
-                        <i class="fas fa-volume-up"></i>
-                        <audio controls>
-                          <source [src]="msg.voiceAudioUrl" type="audio/mpeg" />
-                          Your browser does not support the audio element.
-                        </audio>
+                        <jhi-audio-visualizer [audioUrl]="msg.voiceAudioUrl" />
                       </div>
                     } @else {
                       <span class="audio-placeholder">
