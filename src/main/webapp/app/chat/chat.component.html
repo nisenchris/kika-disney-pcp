@@ -1,183 +1,193 @@
-<div class="chat-container">
-  <div class="container-fluid h-100">
-    <div class="row h-100">
-      <!-- Sidebar with ConversationID Info -->
-      <div class="col-lg-3 col-md-4 sidebar p-4">
-        <h5>
-          <i class="fas fa-info-circle me-2"></i>
-          Session Info
-        </h5>
-        
-        <div class="info-card">
-          <div class="info-label">
-            <i class="fas fa-envelope me-1"></i>
-            Email
-          </div>
-          <div class="fw-bold">{{ userContext()?.email || 'Not logged in' }}</div>
-        </div>
+<div class="chat-shell">
+  <div class="chat-shell__inner">
+    <aside class="chat-sidebar">
+      <header class="sidebar-header">
+        <span class="sidebar-eyebrow">Your Session</span>
+        <h2>Guest Experience Briefing</h2>
+        <p>Everything you need to guide a magical conversation.</p>
+      </header>
 
-        <div class="info-card">
-          <div class="info-label">
-            <i class="fas fa-layer-group me-1"></i>
-            Tier
+      <section class="sidebar-section">
+        <h3 class="sidebar-title">
+          <i class="fas fa-user me-2"></i>
+          Traveler Profile
+        </h3>
+        <dl>
+          <div class="sidebar-detail">
+            <dt>Email</dt>
+            <dd>{{ userContext()?.email || '—' }}</dd>
           </div>
-          <div>
-            <span [class]="getTierBadgeClass()">{{ getTierLabel() || 'NONE' }}</span>
+          <div class="sidebar-detail">
+            <dt>Tier</dt>
+            <dd>
+              <span [class]="getTierBadgeClass()" class="tier-pill">{{ getTierLabel() || 'Standard' }}</span>
+            </dd>
           </div>
-        </div>
+          <div class="sidebar-detail">
+            <dt>Beta Access</dt>
+            <dd>
+              @if (userContext()?.beta) {
+                <span class="status-chip status-chip--positive">
+                  <i class="fas fa-check me-1"></i>
+                  Enabled
+                </span>
+              } @else {
+                <span class="status-chip">
+                  <i class="fas fa-minus me-1"></i>
+                  Standard
+                </span>
+              }
+            </dd>
+          </div>
+        </dl>
+      </section>
 
-        <div class="info-card">
-          <div class="info-label">
-            <i class="fas fa-comment-dots me-1"></i>
-            Conversation ID
-          </div>
-          <div class="conversation-id">
-            @if (prefix) {
-              <span class="prefix-highlight">{{ highlightPrefix(conversationId).prefix }}</span>
-              <span>{{ highlightPrefix(conversationId).rest }}</span>
-            } @else {
-              <span>{{ conversationId }}</span>
-            }
-          </div>
+      <section class="sidebar-section">
+        <h3 class="sidebar-title">
+          <i class="fas fa-comment-dots me-2"></i>
+          Conversation Identity
+        </h3>
+        <div class="conversation-token">
+          @if (prefix) {
+            <span class="token-prefix">{{ highlightPrefix(conversationId).prefix }}</span>
+            <span class="token-body">{{ highlightPrefix(conversationId).rest }}</span>
+          } @else {
+            <span class="token-body">{{ conversationId }}</span>
+          }
         </div>
+        <p class="conversation-caption">Used across services to synchronize flags and experiences.</p>
+      </section>
 
-        <div class="info-card">
-          <div class="info-label">
-            <i class="fas fa-flask me-1"></i>
-            Beta Attribute
-          </div>
-          <div>
-            @if (userContext()?.beta) {
-              <span class="badge bg-secondary">
-                <i class="fas fa-check me-1"></i>
-                Enabled
-              </span>
-            } @else {
-              <span class="badge bg-light text-dark">
-                <i class="fas fa-times me-1"></i>
-                Disabled
-              </span>
-            }
-          </div>
-        </div>
-
-        <div class="info-card">
-          <div class="info-label">
-            <i class="fas fa-microphone me-1"></i>
-            Backend Voice Flag
-          </div>
-          <div>
+      <section class="sidebar-section">
+        <h3 class="sidebar-title">
+          <i class="fas fa-microphone me-2"></i>
+          Flag Signals
+        </h3>
+        <ul class="flag-status">
+          <li>
+            <span>Backend Voice</span>
             @if (backendVoiceEnabled === null) {
-              <span class="badge bg-secondary">
+              <span class="status-chip status-chip--pending">
                 <i class="fas fa-clock me-1"></i>
-                Waiting...
+                Awaiting
               </span>
             } @else if (backendVoiceEnabled) {
-              <span class="badge bg-success">
+              <span class="status-chip status-chip--positive">
                 <i class="fas fa-check me-1"></i>
                 Enabled
               </span>
             } @else {
-              <span class="badge bg-danger">
+              <span class="status-chip status-chip--negative">
                 <i class="fas fa-times me-1"></i>
                 Disabled
               </span>
             }
-          </div>
-        </div>
-      </div>
+          </li>
+        </ul>
+      </section>
+    </aside>
 
-      <!-- Main Chat Area -->
-      <div class="col-lg-9 col-md-8 chat-main">
-        <div class="chat-header p-3 border-bottom">
-          <h3 class="mb-0">LaunchDarkly Demo Chat</h3>
-          <p class="text-muted mb-0 small">Demonstrating flag coordination between frontend and backend</p>
+    <section class="chat-main">
+      <header class="chat-main__header">
+        <div>
+          <span class="header-eyebrow">Live Flag Preview</span>
+          <h1>LaunchDarkly Storyteller</h1>
+          <p>Blend human creativity with flag-powered personalization—just like planning a Disney adventure.</p>
         </div>
+        <div class="header-meta" aria-live="polite">
+          <span class="header-indicator"></span>
+          <span>Connected</span>
+        </div>
+      </header>
 
-        <div class="messages-container p-4">
+      <div class="messages-stage">
+        <div class="messages-stream">
           @if (messages().length === 0) {
-            <div class="empty-state text-center text-muted py-5">
-              <i class="fas fa-comments fa-3x mb-3 opacity-25"></i>
-              <p>Send a message to start the conversation</p>
+            <div class="empty-state">
+              <div class="empty-graphic">
+                <span class="sparkle"></span>
+                <span class="sparkle sparkle--delay"></span>
+                <i class="fas fa-comments"></i>
+              </div>
+              <h2>Start the conversation</h2>
+              <p>Ask anything and we will coordinate the experience with your current flags.</p>
             </div>
           }
 
           @for (msg of messages(); track msg.timestamp) {
-            <div class="message-group mb-4">
-              <!-- User Message -->
-              <div class="user-message mb-2">
-                <div class="message-bubble user-bubble">
+            <article class="message-group" [attr.data-timestamp]="msg.timestamp">
+              <div class="message message--user">
+                <div class="message__bubble">
                   {{ msg.userMessage }}
                 </div>
+                <time class="message__time">{{ formatTimestamp(msg.timestamp) }}</time>
               </div>
 
-              <!-- Bot Response -->
-              <div class="bot-message">
-                <div class="message-bubble bot-bubble">
-                  <div class="d-flex justify-content-between align-items-start mb-2">
-                    <strong>Response</strong>
-                    <span class="text-muted small">{{ formatTimestamp(msg.timestamp) }}</span>
-                  </div>
-                  
-                  <p class="mb-3">{{ msg.textResponse }}</p>
+              <div class="message message--bot">
+                <div class="message__bubble">
+                  <header class="message__header">
+                    <strong>Story Guide</strong>
+                    <time>{{ formatTimestamp(msg.timestamp) }}</time>
+                  </header>
+                  <p>{{ msg.textResponse }}</p>
 
-                  <!-- Backend Flag Indicator -->
-                  <div class="mb-2">
-                    <span [class]="getBackendFlagBadgeClass(msg.backendFlagResult)">
+                  <footer class="message__footer">
+                    <span class="flag-chip" [ngClass]="getBackendFlagBadgeClass(msg.backendFlagResult)">
                       {{ getBackendFlagLabel(msg.backendFlagResult) }}
                     </span>
-                  </div>
 
-                  <!-- Audio Player (if voiceAudioUrl present) -->
-                  @if (msg.voiceAudioUrl) {
-                    <div class="audio-player mt-3 p-3 bg-light rounded">
-                      <div class="d-flex align-items-center">
-                        <i class="fas fa-volume-up me-2 text-success"></i>
-                        <div class="flex-grow-1">
-                          <audio controls class="w-100">
-                            <source [src]="msg.voiceAudioUrl" type="audio/mpeg" />
-                            Your browser does not support the audio element.
-                          </audio>
-                        </div>
+                    @if (msg.voiceAudioUrl) {
+                      <div class="audio-card">
+                        <i class="fas fa-volume-up"></i>
+                        <audio controls>
+                          <source [src]="msg.voiceAudioUrl" type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
                       </div>
-                    </div>
-                  } @else {
-                    <div class="mt-2 small text-muted">
-                      <i class="fas fa-info-circle me-1"></i>
-                      Voice audio not available for this tier
-                    </div>
-                  }
+                    } @else {
+                      <span class="audio-placeholder">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Voice upgrade not active for this tier.
+                      </span>
+                    }
+                  </footer>
                 </div>
               </div>
-            </div>
+            </article>
           }
         </div>
+      </div>
 
-        <div class="chat-input-container p-3 border-top">
-          <form (ngSubmit)="sendMessage()" class="d-flex gap-2">
+      <footer class="chat-composer">
+        <form (ngSubmit)="sendMessage()" class="composer-form">
+          <div class="composer-field">
+            <label for="chat-input" class="visually-hidden">Message</label>
             <input
+              id="chat-input"
               type="text"
-              class="form-control form-control-lg"
-              placeholder="Type your message..."
+              class="form-control"
+              placeholder="Share your next wish..."
               [(ngModel)]="messageInput"
               name="message"
               [disabled]="isSending()"
             />
-            <button
-              type="submit"
-              class="btn btn-primary btn-lg px-4"
-              [disabled]="!messageInput || isSending()"
-            >
-              @if (isSending()) {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              } @else {
-                <i class="fas fa-paper-plane"></i>
-              }
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+          </div>
+          <button
+            type="submit"
+            class="btn composer-submit"
+            [disabled]="!messageInput || isSending()"
+          >
+            @if (isSending()) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Sending
+            } @else {
+              <i class="fas fa-paper-plane"></i>
+              Send
+            }
+          </button>
+        </form>
+      </footer>
+    </section>
   </div>
 </div>
 

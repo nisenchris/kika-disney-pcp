@@ -1,0 +1,103 @@
+:host {
+  display: block;
+}
+
+.app-canvas {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  padding-top: clamp(0.5rem, 3vw, 2.75rem);
+  padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 4vw, 3.5rem);
+
+  &__card {
+    min-height: clamp(460px, 70vh, 860px);
+    animation: surface-float 0.8s ease-out;
+  }
+}
+
+.aurora {
+  position: absolute;
+  filter: blur(60px);
+  opacity: 0.75;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: aurora-drift 18s infinite ease-in-out;
+
+  &--primary {
+    width: 620px;
+    height: 620px;
+    top: -280px;
+    right: -180px;
+    background: radial-gradient(circle at center, rgba(79, 116, 255, 0.65), transparent 65%);
+    animation-delay: -4s;
+  }
+
+  &--accent {
+    width: 520px;
+    height: 520px;
+    bottom: -220px;
+    left: -140px;
+    background: radial-gradient(circle at center, rgba(255, 193, 94, 0.55), transparent 70%);
+    animation-delay: -9s;
+  }
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate3d(12px, -24px, 0) scale(1.05);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes surface-float {
+  0% {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .app-main {
+    padding-inline: 0.25rem;
+
+    &__card {
+      min-height: auto;
+    }
+  }
+
+  .aurora {
+    filter: blur(80px);
+    opacity: 0.5;
+  }
+}
+

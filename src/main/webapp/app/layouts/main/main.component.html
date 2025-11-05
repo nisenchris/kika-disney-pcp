@@ -1,13 +1,18 @@
 <jhi-page-ribbon />
 
-<div>
-  <router-outlet name="navbar" />
-</div>
+<div class="app-canvas">
+  <div class="aurora aurora--primary"></div>
+  <div class="aurora aurora--accent"></div>
 
-<div class="container-fluid">
-  <div class="card jh-card">
-    <router-outlet />
+  <div class="app-canvas__content">
+    <router-outlet name="navbar" />
+
+    <div class="app-main container-fluid">
+      <div class="card jh-card app-main__card">
+        <router-outlet />
+      </div>
+
+      <jhi-footer />
+    </div>
   </div>
-
-  <jhi-footer />
 </div>

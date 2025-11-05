@@ -2,122 +2,231 @@
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
 
-/* ==============================================================
-Bootstrap tweaks
-===============================================================*/
+:root {
+  color-scheme: light;
+  --font-sans: 'Inter', 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --page-gradient: radial-gradient(120% 180% at 50% 0%, rgba(12, 78, 204, 0.35) 0%, rgba(12, 78, 204, 0) 60%), linear-gradient(180deg, #f4f7ff 0%, #e9f1ff 45%, #f1f6ff 100%);
+  --color-primary: #0b3d91;
+  --color-primary-soft: rgba(11, 61, 145, 0.12);
+  --color-secondary: #1f6feb;
+  --color-accent: #ffbf4d;
+  --color-midnight: #020b33;
+  --color-cloud: rgba(255, 255, 255, 0.82);
+  --color-cloud-strong: rgba(255, 255, 255, 0.94);
+  --color-border-soft: rgba(11, 61, 145, 0.18);
+  --color-border-strong: rgba(15, 23, 42, 0.08);
+  --text-primary: #102347;
+  --text-secondary: rgba(16, 35, 71, 0.72);
+  --text-muted: rgba(16, 35, 71, 0.52);
+  --shadow-soft: 0 18px 40px rgba(15, 35, 71, 0.15);
+  --shadow-glow: 0 0 0 1px rgba(51, 138, 255, 0.12), 0 12px 30px rgba(11, 61, 145, 0.18);
+  --nav-height: 72px;
+  --surface-radius: 28px;
+  --transition-base: all 0.25s ease;
+  --transition-slow: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  --glass-blur: blur(20px);
+}
 
-body,
+body.theme-dark,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --page-gradient: radial-gradient(120% 120% at 50% 0%, rgba(64, 120, 255, 0.22) 0%, rgba(8, 21, 67, 0) 65%), linear-gradient(180deg, #050b24 0%, #051132 45%, #03071f 100%);
+  --color-primary: #64a2ff;
+  --color-primary-soft: rgba(100, 162, 255, 0.16);
+  --color-secondary: #7aa7ff;
+  --color-accent: #ffd166;
+  --color-cloud: rgba(10, 18, 45, 0.75);
+  --color-cloud-strong: rgba(12, 24, 63, 0.92);
+  --color-border-soft: rgba(124, 181, 255, 0.18);
+  --color-border-strong: rgba(255, 255, 255, 0.08);
+  --text-primary: #f4f7ff;
+  --text-secondary: rgba(228, 236, 255, 0.78);
+  --text-muted: rgba(228, 236, 255, 0.55);
+  --shadow-soft: 0 18px 40px rgba(4, 12, 32, 0.75);
+  --shadow-glow: 0 0 0 1px rgba(122, 167, 255, 0.24), 0 14px 32px rgba(4, 12, 32, 0.85);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--page-gradient) fixed;
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background 0.6s ease, color 0.6s ease;
+}
+
 h1,
 h2,
 h3,
-h4 {
-  font-weight: 300;
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
 }
 
-/* Increase contrast of links to get 100% on Lighthouse Accessibility Audit. Override this color if you want to change the link color, or use a Bootswatch theme */
+p,
+span,
+label,
+small {
+  color: var(--text-secondary);
+}
+
 a {
-  color: #533f03;
-  font-weight: bold;
+  color: var(--color-secondary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition-base);
+
+  &:hover {
+    color: var(--color-primary);
+    text-shadow: 0 0 12px rgba(100, 162, 255, 0.4);
+  }
 }
 
-/* override hover color for dropdown-item forced by bootstrap to all a:not([href]):not([tabindex]) elements in _reboot.scss */
 a:not([href]):not([tabindex]):hover.dropdown-item {
   color: $dropdown-link-hover-color;
 }
 
-/* override .dropdown-item.active background-color on hover */
 .dropdown-item.active:hover {
   background-color: mix($dropdown-link-hover-bg, $dropdown-link-active-bg, 50%);
-}
-
-a:hover {
-  color: #533f03;
-  /* make sure browsers use the pointer cursor for anchors, even with no href */
-  cursor: pointer;
 }
 
 .dropdown-item:hover {
   color: $dropdown-link-hover-color;
 }
 
-/* ==========================================================================
-Browser Upgrade Prompt
-========================================================================== */
-.browserupgrade {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
+/* ==============================================================
+Layout shells
+===============================================================*/
+
+.container-fluid {
+  padding-inline: clamp(1rem, 3vw, 3rem);
 }
-
-/* ==========================================================================
-Generic styles
-========================================================================== */
-
-/* Error highlight on input fields */
-.ng-valid[required],
-.ng-valid.required {
-  border-left: 5px solid green;
-}
-
-.ng-invalid:not(form) {
-  border-left: 5px solid red;
-}
-
-/* other generic styles */
 
 .jh-card {
-  padding: 1.5%;
-  margin-top: 20px;
-  border: none;
+  position: relative;
+  margin-top: clamp(1.25rem, 2.5vw, 2.75rem);
+  padding: clamp(1.5rem, 2vw, 2.5rem);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--surface-radius);
+  background: var(--color-cloud);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-slow);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -40% 20% auto -20%;
+    height: 140%;
+    background: radial-gradient(ellipse at top, rgba(100, 162, 255, 0.28), transparent 60%);
+    opacity: 0.6;
+    pointer-events: none;
+    transform: translate3d(0, 0, 0);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: auto -20% -50% 40%;
+    height: 120%;
+    background: radial-gradient(ellipse at bottom, rgba(255, 200, 102, 0.22), transparent 65%);
+    opacity: 0.6;
+    pointer-events: none;
+    transform: translate3d(0, 0, 0);
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-glow);
+    border-color: rgba(100, 162, 255, 0.3);
+  }
 }
 
-.error {
-  color: white;
-  background-color: red;
-}
-
-.pad {
-  padding: 10px;
-}
-
-.w-40 {
-  width: 40% !important;
-}
-
-.w-60 {
-  width: 60% !important;
-}
-
-.break {
-  white-space: normal;
-  word-break: break-all;
-}
-
-.form-control {
-  background-color: #fff;
-}
-
-.readonly {
-  background-color: #eee;
-  opacity: 1;
+.surface-compact {
+  border-radius: calc(var(--surface-radius) - 12px);
+  padding: clamp(1.25rem, 2vw, 2rem);
 }
 
 .footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding: 1.5rem 0 0.5rem;
+  border-top: 1px solid var(--color-border-strong);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
 }
+
+/* ==============================================================
+Utility enhancements
+===============================================================*/
 
 .hand,
 [jhisortby] {
   cursor: pointer;
 }
 
-/* ==========================================================================
-Custom alerts for notification
-========================================================================== */
+.form-control,
+.form-select {
+  background-color: var(--color-cloud-strong);
+  border-radius: 14px;
+  border: 1px solid var(--color-border-strong);
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+
+  &:focus {
+    border-color: rgba(100, 162, 255, 0.8);
+    box-shadow: 0 0 0 4px rgba(100, 162, 255, 0.2);
+  }
+
+  &.is-invalid {
+    border-color: rgba(242, 95, 92, 0.65);
+  }
+}
+
+.readonly,
+.form-control[readonly] {
+  background-color: rgba(255, 255, 255, 0.45);
+  opacity: 1;
+}
+
+.ng-valid[required],
+.ng-valid.required {
+  border-left: 4px solid rgba(15, 157, 88, 0.6);
+}
+
+.ng-invalid:not(form) {
+  border-left: 4px solid rgba(242, 95, 92, 0.65);
+}
+
+.break {
+  white-space: normal;
+  word-break: break-word;
+}
+
 .alerts {
   .alert {
+    border-radius: 14px;
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-cloud-strong);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-soft);
     text-overflow: ellipsis;
+
     pre {
       background: none;
       border: none;
@@ -126,111 +235,97 @@ Custom alerts for notification
       padding: 0;
       margin: 0;
     }
+
     .popover pre {
-      font-size: 10px;
+      font-size: 0.75rem;
     }
   }
+
   .jhi-toast {
     position: fixed;
-    width: 100%;
-    &.left {
-      left: 5px;
-    }
-    &.right {
-      right: 5px;
-    }
-    &.top {
-      top: 55px;
-    }
-    &.bottom {
-      bottom: 55px;
-    }
+    width: min(420px, 90vw);
+    inset-inline: auto 1rem;
+    inset-block-start: calc(var(--nav-height) + 12px);
+    z-index: 1050;
   }
 }
 
-@media screen and (min-width: 480px) {
+@media screen and (max-width: 480px) {
   .alerts .jhi-toast {
-    width: 50%;
+    inset-inline: 0.75rem;
+    width: auto;
   }
 }
-
-/* ==========================================================================
-entity list page css
-========================================================================== */
 
 .table-entities thead th .d-flex > * {
   margin: auto 0;
 }
 
-/* ==========================================================================
-entity detail page css
-========================================================================== */
 .row-md.jh-entity-details {
   display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 10px;
-  line-height: 1.5;
+  grid-template-columns: minmax(160px, auto) minmax(0, 1fr);
+  column-gap: 18px;
+  line-height: 1.6;
 }
 
 @media screen and (min-width: 768px) {
   .row-md.jh-entity-details > {
     dt {
-      float: left;
-      overflow: hidden;
-      clear: left;
       text-align: right;
       text-overflow: ellipsis;
       white-space: nowrap;
       padding: 0.5em 0;
+      color: var(--text-muted);
     }
+
     dd {
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--color-border-strong);
       padding: 0.5em 0;
       margin-left: 0;
     }
   }
 }
 
-/* ==========================================================================
-ui bootstrap tweaks
-========================================================================== */
-.nav,
-.pagination,
-.carousel,
-.panel-title a {
-  cursor: pointer;
-}
-
-.thread-dump-modal-lock {
-  max-width: 450px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .dropdown-menu {
   padding-left: 0;
 }
 
-/* ==========================================================================
-angular-cli removes postcss-rtl processed inline css, processed rules must be added here instead
-========================================================================== */
-/* page-ribbon.component.scss */
+.browserupgrade {
+  margin: 0.4rem 0;
+  background: var(--color-secondary);
+  color: white;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.75rem;
+}
+
 .ribbon {
   left: -3.5em;
-  -moz-transform: rotate(-45deg);
-  -ms-transform: rotate(-45deg);
-  -o-transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
 
-/* navbar.component.scss */
-.navbar {
-  ul.navbar-nav {
-    .nav-item {
-      margin-left: 0.5em;
-    }
-  }
+.navbar ul.navbar-nav .nav-item {
+  margin-left: 0.5em;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 35, 71, 0.25);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+body.theme-dark ::-webkit-scrollbar-thumb,
+:root[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 /* jhipster-needle-scss-add-main JHipster will add new css style */
