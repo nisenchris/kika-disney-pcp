@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import SharedModule from 'app/shared/shared.module';
 import { LaunchDarklyService, UserContext } from 'app/services/launchdarkly.service';
+import { ThemeService } from 'app/core/theme/theme.service';
 
 @Component({
   selector: 'jhi-navbar',
@@ -12,9 +13,11 @@ import { LaunchDarklyService, UserContext } from 'app/services/launchdarkly.serv
 export default class NavbarComponent implements OnInit {
   userContext = signal<UserContext | null>(null);
   isNavbarCollapsed = signal(true);
+  isDarkMode = computed(() => this.themeService.isDark());
 
   private readonly ldService = inject(LaunchDarklyService);
   private readonly router = inject(Router);
+  private readonly themeService = inject(ThemeService);
 
   ngOnInit(): void {
     this.ldService.getUserContext().subscribe(context => {
@@ -37,9 +40,21 @@ export default class NavbarComponent implements OnInit {
     return prefix.toUpperCase();
   }
 
+  getThemeToggleIcon(): string {
+    return this.isDarkMode() ? 'fas fa-sun' : 'fas fa-moon';
+  }
+
+  getThemeToggleLabel(): string {
+    return this.isDarkMode() ? 'Light mode' : 'Dark mode';
+  }
+
   async logout(): Promise<void> {
     await this.ldService.switchToAnonymous();
     this.router.navigate(['/login']);
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
 
   toggleNavbar(): void {

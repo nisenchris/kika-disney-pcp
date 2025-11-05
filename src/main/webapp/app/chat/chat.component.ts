@@ -103,11 +103,11 @@ export default class ChatComponent implements OnInit {
   }
 
   getBackendFlagBadgeClass(flagResult: boolean): string {
-    return flagResult ? 'badge bg-success' : 'badge bg-danger';
+    return flagResult ? 'flag-chip--positive' : 'flag-chip--negative';
   }
 
   getBackendFlagLabel(flagResult: boolean): string {
-    return flagResult ? 'Backend: Voice ✓' : 'Backend: Voice ✗';
+    return flagResult ? 'Voice channel · enabled' : 'Voice channel · disabled';
   }
 
   highlightPrefix(conversationId: string): { prefix: string; rest: string } {
