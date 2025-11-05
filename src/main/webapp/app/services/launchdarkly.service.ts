@@ -7,10 +7,10 @@ import { environment } from 'environments/environment';
 /**
  * 🎯 DEMO: Frontend LaunchDarkly Integration
  * 
- * This service demonstrates FLAG #1: quick-test-conversation-prefix
+ * This service demonstrates FLAG #1: conversationid-prefix
  * 
  * What it does:
- * - Evaluates the 'quick-test-conversation-prefix' flag based on user attributes (email, beta)
+ * - Evaluates the 'conversationid-prefix' flag based on user attributes (email, beta)
  * - Returns a tier prefix: "premium", "test", "beta", or "" (empty string)
  * - Generates a conversation ID like: "premium_conv_abc12345"
  * - This ID is sent to the backend via HTTP header (X-Conversation-ID)
@@ -21,7 +21,7 @@ import { environment } from 'environments/environment';
 export interface UserContext {
   email: string;
   beta: boolean;
-  prefix: string; // Result of 'quick-test-conversation-prefix' flag
+  prefix: string; // Result of 'conversationid-prefix' flag
   conversationId: string; // Generated ID with prefix: "{prefix}_conv_{uniqueId}"
 }
 
@@ -66,12 +66,12 @@ export class LaunchDarklyService {
       this.ldClient = LDClient.initialize(environment.ldClientId, user);
       await this.ldClient.waitForInitialization();
 
-      // 🎯 FLAG #1: Evaluate 'quick-test-conversation-prefix'
+      // 🎯 FLAG #1: Evaluate 'conversationid-prefix'
       // This determines the tier based on LaunchDarkly targeting rules
-      const prefix = this.ldClient.variation('quick-test-conversation-prefix', '');
+      const prefix = this.ldClient.variation('conversationid-prefix', '');
       const conversationId = this.generateConversationId(prefix);
 
-      console.log('✅ Flag evaluated: quick-test-conversation-prefix =', prefix || '(empty)');
+      console.log('✅ Flag evaluated: conversationid-prefix =', prefix || '(empty)');
       console.log('📋 Generated conversation ID:', conversationId);
 
       this.userContext$.next({ email, beta, prefix, conversationId });
@@ -101,7 +101,7 @@ export class LaunchDarklyService {
     if (!this.ldClient) {
       return this.userContext$.value?.prefix ?? '';
     }
-    return this.ldClient.variation('quick-test-conversation-prefix', '') as string;
+    return this.ldClient.variation('conversationid-prefix', '') as string;
   }
 
   /**
@@ -112,7 +112,7 @@ export class LaunchDarklyService {
     if (!this.ldClient) {
       return false;
     }
-    return this.ldClient.variation('quick-test-voice-chat-enabled-client', false) as boolean;
+    return this.ldClient.variation('voice-chat-enabled-client', false) as boolean;
   }
 
   /**

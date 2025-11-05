@@ -14,13 +14,13 @@ This demo shows how to coordinate feature flags between frontend and backend usi
 
 ## Required Flags
 
-### 1. Frontend Flag: `quick-test-conversation-prefix`
+### 1. Frontend Flag: `conversationid-prefix`
 
 **Purpose:** Determines the tier prefix added to conversation IDs based on user attributes (email, beta).
 
 #### Configuration
 
-- **Flag Key:** `quick-test-conversation-prefix`
+- **Flag Key:** `conversationid-prefix`
 - **Name:** Quick Test Conversation Prefix
 - **Type:** String (multi-variate flag)
 - **Client-side SDK:** ✅ Enabled (MUST be enabled)
@@ -74,13 +74,13 @@ Default:
 
 ---
 
-### 2. Backend Flag: `quick-test-voice-chat-enabled`
+### 2. Backend Flag: `voice-chat-enabled`
 
 **Purpose:** Controls whether voice audio URLs are included in chat responses based on conversation tier.
 
 #### Configuration
 
-- **Flag Key:** `quick-test-voice-chat-enabled`
+- **Flag Key:** `voice-chat-enabled`
 - **Name:** Quick Test Voice Chat Enabled
 - **Type:** Boolean
 - **Client-side SDK:** ❌ Disabled (server-side only)
@@ -142,7 +142,7 @@ Matches:
 1. **User Login (Frontend)**
    - User enters email and beta checkbox
    - Frontend creates user context: `{ kind: 'user', key: email, email: email, beta: boolean }`
-   - Frontend evaluates `quick-test-conversation-prefix` flag
+   - Frontend evaluates `conversationid-prefix` flag
    - Returns prefix: `"beta"`, `"test"`, `"premium"`, or `""` (empty)
 
 2. **Conversation ID Generation (Frontend)**
@@ -156,7 +156,7 @@ Matches:
 
 4. **Backend Flag Evaluation**
    - Backend creates context: `{ kind: 'conversation', key: conversationID }`
-   - Backend evaluates `quick-test-voice-chat-enabled` flag
+   - Backend evaluates `voice-chat-enabled` flag
    - Returns boolean based on conversation ID pattern
 
 5. **Response Coordination**
@@ -178,7 +178,7 @@ The **conversation ID itself carries the tier information** through its prefix. 
 2. **Use the "Test" tab**
 3. **Enter test contexts:**
 
-#### Test `quick-test-conversation-prefix` Flag
+#### Test `conversationid-prefix` Flag
 
 ```json
 {
@@ -191,7 +191,7 @@ The **conversation ID itself carries the tier information** through its prefix. 
 
 Expected result: `"premium"`
 
-#### Test `quick-test-voice-chat-enabled` Flag
+#### Test `voice-chat-enabled` Flag
 
 ```json
 {
@@ -277,12 +277,12 @@ When you're ready to create the flags, provide your LaunchDarkly project key and
 Example command (will be executed when you provide project key):
 
 ```
-Create flag: quick-test-conversation-prefix
+Create flag: conversationid-prefix
   - Type: multivariate string
   - Variations: beta, test, premium, ""
   - Default: ""
   
-Create flag: quick-test-voice-chat-enabled
+Create flag: voice-chat-enabled
   - Type: boolean
   - Variations: true, false
   - Default: false
@@ -294,7 +294,7 @@ Create flag: quick-test-voice-chat-enabled
 
 ### Frontend Flag Not Working
 
-- ✅ Verify flag key is exactly `quick-test-conversation-prefix`
+- ✅ Verify flag key is exactly `conversationid-prefix`
 - ✅ Ensure flag is toggled ON in LaunchDarkly
 - ✅ Check Client-side SDK is enabled for this flag
 - ✅ Verify context has correct attributes (email, beta)
@@ -302,7 +302,7 @@ Create flag: quick-test-voice-chat-enabled
 
 ### Backend Flag Not Working
 
-- ✅ Verify flag key is exactly `quick-test-voice-chat-enabled`
+- ✅ Verify flag key is exactly `voice-chat-enabled`
 - ✅ Check context kind is "conversation" not "user"
 - ✅ Ensure conversation ID format is correct (e.g., "premium_conv_abc123")
 - ✅ Verify targeting rules match your conversation ID patterns

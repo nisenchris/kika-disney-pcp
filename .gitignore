@@ -151,3 +151,12 @@ Desktop.ini
 ######################
 coverage/
 .nyc_output/
+
+######################
+# Environment & Secrets
+######################
+.env
+.env.local
+.env.*.local
+src/main/resources/config/application-*.local.yml
+src/main/webapp/environments/environment.local.ts

@@ -117,8 +117,11 @@ jhipster:
 
 # ===================================================================
 # LaunchDarkly Configuration
-# Get SDK keys from: LaunchDarkly > Account Settings > Projects > [Your Project] > Environments
+# Set these via environment variables:
+#   - LD_SDK_KEY: Your LaunchDarkly Server SDK Key
+#   - LD_PROJECT_KEY: Your LaunchDarkly Project Key (optional)
+# Get keys from: LaunchDarkly > Account Settings > Projects > [Your Project] > Environments
 # ===================================================================
 launchdarkly:
-  sdk-key: sdk-fb434e2c-4276-4c65-a0ff-070908ca1a06 # Add your LaunchDarkly Server SDK Key here
-  project-key: kika-testing-shtuf # Add your LaunchDarkly Project Key here
+  sdk-key: ${LD_SDK_KEY:}
+  project-key: ${LD_PROJECT_KEY:}

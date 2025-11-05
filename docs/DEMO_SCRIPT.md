@@ -32,7 +32,7 @@ This demo showcases **frontend/backend feature flag coordination** using LaunchD
 
 Ensure these flags are configured BEFORE the demo:
 
-**Flag #1: `quick-test-conversation-prefix`**
+**Flag #1: `conversationid-prefix`**
 - Type: String (multivariate)
 - Client-side SDK: ✅ Enabled
 - Variations: `premium`, `test`, `beta`, `""` (empty)
@@ -41,7 +41,7 @@ Ensure these flags are configured BEFORE the demo:
   - Rule 2: If email ends with `@disney.com` → serve `test`
   - Default: serve `""` (empty)
 
-**Flag #2: `quick-test-voice-chat-enabled`**
+**Flag #2: `voice-chat-enabled`**
 - Type: Boolean
 - Server-side only
 - **Initial targeting rules:**
@@ -82,7 +82,7 @@ Ensure these flags are configured BEFORE the demo:
 **Point out in Console:**
 ```
 🚀 Initializing LaunchDarkly with user context: { email: "user@example.com", beta: false }
-✅ Flag evaluated: quick-test-conversation-prefix = (empty)
+✅ Flag evaluated: conversationid-prefix = (empty)
 📋 Generated conversation ID: conv_xyz78901
 ```
 
@@ -127,7 +127,7 @@ Ensure these flags are configured BEFORE the demo:
 **Point out in Console:**
 ```
 🚀 Initializing LaunchDarkly with user context: { email: "tester@disney.com", beta: false }
-✅ Flag evaluated: quick-test-conversation-prefix = test
+✅ Flag evaluated: conversationid-prefix = test
 📋 Generated conversation ID: test_conv_abc456
 ```
 
@@ -148,7 +148,7 @@ Ensure these flags are configured BEFORE the demo:
 ```
 📨 Received chat message
 📋 Conversation ID from header: test_conv_abc456
-✅ Flag evaluated: quick-test-voice-chat-enabled for conversationID 'test_conv_abc456' = true
+✅ Flag evaluated: voice-chat-enabled for conversationID 'test_conv_abc456' = true
 📤 Sending response - Voice enabled: true - Audio URL: included
 ```
 
@@ -177,7 +177,7 @@ Ensure these flags are configured BEFORE the demo:
 #### 3.1 Frontend Flag
 
 **Do:**
-1. Open `quick-test-conversation-prefix` flag in LaunchDarkly
+1. Open `conversationid-prefix` flag in LaunchDarkly
 2. Show **Variations:** `premium`, `test`, `beta`, `""` (empty)
 3. Show **Targeting Rules:**
    - Rule 1: "If email starts with `premium`" → serve `premium`
@@ -191,7 +191,7 @@ Ensure these flags are configured BEFORE the demo:
 #### 3.2 Backend Flag
 
 **Do:**
-1. Open `quick-test-voice-chat-enabled` flag
+1. Open `voice-chat-enabled` flag
 2. Show **Targeting Rules:**
    - Rule 1: "If key starts with `premium_`" → serve `true`
    - Rule 2: "If key starts with `test_`" → serve `true`
@@ -229,7 +229,7 @@ Ensure these flags are configured BEFORE the demo:
 #### 4.1 Edit Frontend Flag
 
 **Do:**
-1. Edit `quick-test-conversation-prefix` flag
+1. Edit `conversationid-prefix` flag
 2. Click "Add rule" ABOVE the existing `premium` rule
 3. Configure:
    - **Name:** "Premium Beta / Early Access Program"
@@ -247,7 +247,7 @@ Ensure these flags are configured BEFORE the demo:
 #### 4.2 Edit Backend Flag
 
 **Do:**
-1. Edit `quick-test-voice-chat-enabled` flag
+1. Edit `voice-chat-enabled` flag
 2. Click "Add rule" at the top
 3. Configure:
    - **Name:** "Beta/EAP Voice Access"
@@ -281,7 +281,7 @@ Ensure these flags are configured BEFORE the demo:
 **Point out in Console:**
 ```
 🚀 Initializing LaunchDarkly with user context: { email: "premium@example.com", beta: true }
-✅ Flag evaluated: quick-test-conversation-prefix = beta
+✅ Flag evaluated: conversationid-prefix = beta
 📋 Generated conversation ID: beta_conv_xyz789
 ```
 
@@ -301,7 +301,7 @@ Ensure these flags are configured BEFORE the demo:
 **Show in Backend Logs:**
 ```
 📋 Conversation ID from header: beta_conv_xyz789
-✅ Flag evaluated: quick-test-voice-chat-enabled for conversationID 'beta_conv_xyz789' = true
+✅ Flag evaluated: voice-chat-enabled for conversationID 'beta_conv_xyz789' = true
 ```
 
 **Say:**
@@ -356,8 +356,8 @@ Ensure these flags are configured BEFORE the demo:
 
 **Show lines 69-75:**
 ```typescript
-// 🎯 FLAG #1: Evaluate 'quick-test-conversation-prefix'
-const prefix = this.ldClient.variation('quick-test-conversation-prefix', '');
+// 🎯 FLAG #1: Evaluate 'conversationid-prefix'
+const prefix = this.ldClient.variation('conversationid-prefix', '');
 const conversationId = this.generateConversationId(prefix);
 ```
 
@@ -397,7 +397,7 @@ LDContext context = LDContext.builder(conversationID)
     .kind("conversation")  // Important: NOT "user"
     .build();
 
-// 🎯 FLAG #2: Evaluate 'quick-test-voice-chat-enabled'
+// 🎯 FLAG #2: Evaluate 'voice-chat-enabled'
 boolean flagValue = ldClient.boolVariation(VOICE_CHAT_FLAG, context, false);
 ```
 

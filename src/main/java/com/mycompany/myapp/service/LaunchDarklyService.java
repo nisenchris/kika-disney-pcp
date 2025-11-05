@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 /**
  * 🎯 DEMO: Backend LaunchDarkly Integration
  * 
- * This service demonstrates FLAG #2: quick-test-voice-chat-enabled
+ * This service demonstrates FLAG #2: voice-chat-enabled
  * 
  * What it does:
  * - Receives conversation ID from frontend via X-Conversation-ID header
  * - Creates a LaunchDarkly context of kind "conversation" (NOT "user")
- * - Evaluates the 'quick-test-voice-chat-enabled' flag based on conversation ID pattern
+ * - Evaluates the 'voice-chat-enabled' flag based on conversation ID pattern
  * - Returns boolean: true (voice enabled) or false (voice disabled)
  * 
  * KEY PRIVACY FEATURE:
@@ -30,7 +30,7 @@ public class LaunchDarklyService {
     private static final Logger log = LoggerFactory.getLogger(LaunchDarklyService.class);
     
     // 🎯 FLAG #2: Server-side voice chat feature flag
-    private static final String VOICE_CHAT_FLAG = "quick-test-voice-chat-enabled";
+    private static final String VOICE_CHAT_FLAG = "voice-chat-enabled";
 
     private final LDClient ldClient;
 
@@ -61,7 +61,7 @@ public class LaunchDarklyService {
                 .kind("conversation")  // Important: kind = "conversation" not "user"
                 .build();
 
-            // 🎯 FLAG #2: Evaluate 'quick-test-voice-chat-enabled'
+            // 🎯 FLAG #2: Evaluate 'voice-chat-enabled'
             boolean flagValue = ldClient.boolVariation(VOICE_CHAT_FLAG, context, false);
 
             log.info("✅ Flag evaluated: {} for conversationID '{}' = {}", 

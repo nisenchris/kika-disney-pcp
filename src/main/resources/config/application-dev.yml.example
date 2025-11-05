@@ -1,9 +1,20 @@
 # ===================================================================
 # LaunchDarkly Configuration Example
-# Copy this configuration to your application-dev.yml file
+# DEPRECATED: This file is kept for reference only
+# 
+# DO NOT hardcode SDK keys in this file!
+# Instead, use environment variables as shown in docs/LAUNCHDARKLY_SETUP.md
 # ===================================================================
-
-launchdarkly:
-  sdk-key: YOUR_LAUNCHDARKLY_SERVER_SDK_KEY_HERE  # Get from LaunchDarkly: Account settings > Projects > [project] > Environments > [env] > SDK key
-  project-key: YOUR_PROJECT_KEY_HERE  # Get from LaunchDarkly: Account settings > Projects > [project] > Settings
+#
+# The application-dev.yml now uses environment variables:
+#   launchdarkly:
+#     sdk-key: ${LD_SDK_KEY:}
+#     project-key: ${LD_PROJECT_KEY:}
+#
+# Set these via:
+#   1. Create .env.local file (recommended for local dev)
+#   2. Export environment variables in your terminal
+#   3. Configure in your IDE run configuration
+#
+# See docs/LAUNCHDARKLY_SETUP.md for detailed instructions
 

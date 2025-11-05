@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * 
  * This controller demonstrates how the backend:
  * 1. Receives conversation ID via X-Conversation-ID header (NOT in request body)
- * 2. Evaluates the 'quick-test-voice-chat-enabled' flag using that conversation ID
+ * 2. Evaluates the 'voice-chat-enabled' flag using that conversation ID
  * 3. Returns voice audio URL only if the flag is enabled for that tier
  * 
  * KEY ARCHITECTURE:
@@ -53,7 +53,7 @@ public class ChatController {
      * 
      * Flow:
      * 1. Extract conversation ID from X-Conversation-ID header (automatically added by frontend interceptor)
-     * 2. Evaluate 'quick-test-voice-chat-enabled' flag using conversation ID as context
+     * 2. Evaluate 'voice-chat-enabled' flag using conversation ID as context
      * 3. Include voice audio URL ONLY if flag returns true
      * 4. Return response to frontend with flag evaluation result
      * 
@@ -76,7 +76,7 @@ public class ChatController {
             conversationID = "anonymous";
         }
 
-        // 🎯 FLAG #2: Evaluate 'quick-test-voice-chat-enabled' flag
+        // 🎯 FLAG #2: Evaluate 'voice-chat-enabled' flag
         boolean voiceEnabled = launchDarklyService.evaluateVoiceChat(conversationID);
 
         // Prepare response

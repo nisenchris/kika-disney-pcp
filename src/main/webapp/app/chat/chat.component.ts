@@ -12,14 +12,14 @@ import AudioVisualizerComponent from './audio-visualizer/audio-visualizer.compon
  * 
  * This component demonstrates the complete flag coordination flow:
  * 
- * 1. Displays user context from FLAG #1 (quick-test-conversation-prefix):
+ * 1. Displays user context from FLAG #1 (conversationid-prefix):
  *    - User email and beta status
  *    - Assigned tier prefix (premium, test, beta, or none)
  *    - Generated conversation ID
  * 
  * 2. Sends messages to backend:
  *    - Conversation ID automatically added via HTTP interceptor as X-Conversation-ID header
- *    - Backend evaluates FLAG #2 (quick-test-voice-chat-enabled)
+ *    - Backend evaluates FLAG #2 (voice-chat-enabled)
  * 
  * 3. Displays backend flag results:
  *    - Shows whether voice is enabled/disabled for this tier
@@ -40,14 +40,14 @@ interface ChatMessage extends ChatResponse {
   styleUrl: './chat.component.scss',
 })
 export default class ChatComponent implements OnInit {
-  // User context from FLAG #1 evaluation (quick-test-conversation-prefix)
+  // User context from FLAG #1 evaluation (conversationid-prefix)
   userContext = signal<UserContext | null>(null);
   
   messages = signal<ChatMessage[]>([]);
   messageInput = '';
   isSending = signal(false);
   
-  // Result from FLAG #2 evaluation (quick-test-voice-chat-enabled) - returned by backend
+  // Result from FLAG #2 evaluation (voice-chat-enabled) - returned by backend
   lastBackendFlagResult = signal<boolean | null>(null);
 
   private readonly ldService = inject(LaunchDarklyService);
@@ -98,7 +98,7 @@ export default class ChatComponent implements OnInit {
    * What happens when user sends a message:
    * 1. ConversationIdInterceptor automatically adds X-Conversation-ID header
    * 2. Backend receives: header + message (NOT user email!)
-   * 3. Backend evaluates FLAG #2 (quick-test-voice-chat-enabled)
+   * 3. Backend evaluates FLAG #2 (voice-chat-enabled)
    * 4. Response includes flag result and optional voice audio URL
    * 5. Frontend displays the result in the sidebar and message
    */

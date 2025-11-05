@@ -7,7 +7,7 @@ import { LaunchDarklyService } from 'app/services/launchdarkly.service';
 /**
  * 🎯 DEMO: Login Component
  * 
- * This is where FLAG #1 (quick-test-conversation-prefix) gets evaluated.
+ * This is where FLAG #1 (conversationid-prefix) gets evaluated.
  * 
  * User inputs:
  * - Email: Used as the LaunchDarkly user context key
@@ -46,7 +46,7 @@ export default class LoginComponent {
 
   /**
    * 🎯 DEMO: Login Flow
-   * Initializes LaunchDarkly and evaluates FLAG #1 (quick-test-conversation-prefix)
+   * Initializes LaunchDarkly and evaluates FLAG #1 (conversationid-prefix)
    */
   async login(): Promise<void> {
     this.authenticationError.set(false);
@@ -57,7 +57,7 @@ export default class LoginComponent {
     console.log('🔐 Logging in with:', { email, beta });
 
     try {
-      // 🎯 FLAG #1: Initialize LaunchDarkly and evaluate 'quick-test-conversation-prefix'
+      // 🎯 FLAG #1: Initialize LaunchDarkly and evaluate 'conversationid-prefix'
       await this.ldService.initialize(email, beta);
       
       // Navigate to chat page (where conversation ID will be visible)

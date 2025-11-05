@@ -122,3 +122,13 @@ jhipster:
 # ===================================================================
 
 # application:
+
+# ===================================================================
+# LaunchDarkly Configuration
+# REQUIRED: Set these via environment variables in production:
+#   - LD_SDK_KEY: Your LaunchDarkly Server SDK Key
+#   - LD_PROJECT_KEY: Your LaunchDarkly Project Key (optional)
+# ===================================================================
+launchdarkly:
+  sdk-key: ${LD_SDK_KEY}
+  project-key: ${LD_PROJECT_KEY:}

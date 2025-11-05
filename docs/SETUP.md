@@ -65,14 +65,14 @@ launchdarkly:
 
 You need to create two feature flags in your LaunchDarkly project. See `FLAGS.md` for detailed flag configuration.
 
-### Frontend Flag: `quick-test-conversation-prefix`
+### Frontend Flag: `conversationid-prefix`
 
 - **Type:** String (multi-variate)
 - **Client-side SDK:** ✅ Enabled (MUST be enabled)
 - **Default value:** `""` (empty string)
 - **Variations:** `beta`, `test`, `premium`, `""` (empty)
 
-### Backend Flag: `quick-test-voice-chat-enabled`
+### Backend Flag: `voice-chat-enabled`
 
 - **Type:** Boolean
 - **Server-side SDK:** ✅ Enabled
@@ -111,7 +111,7 @@ Once configured, you can test these scenarios:
 ### Start Backend
 
 ```bash
-./mvnw spring-boot:run
+./mvnw spring-boot:run -Dmaven.test.skip=true spring-boot:run
 ```
 
 Backend will be available at: `http://localhost:8080`
