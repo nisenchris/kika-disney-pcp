@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import com.mycompany.myapp.web.filter.SpaWebFilter;
 import tech.jhipster.config.JHipsterConstants;
 import tech.jhipster.config.JHipsterProperties;
 import tech.jhipster.config.h2.H2ConfigurationHelper;
@@ -98,6 +99,11 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             source.registerCorsConfiguration("/swagger-ui/**", config);
         }
         return new CorsFilter(source);
+    }
+
+    @Bean
+    public SpaWebFilter spaWebFilter() {
+        return new SpaWebFilter();
     }
 
     private boolean h2ConsoleIsEnabled(Environment env) {
