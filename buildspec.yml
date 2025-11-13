@@ -18,11 +18,13 @@ phases:
     commands:
       - echo Build completed on `date`
       - ls -lh target/*.jar
+      - mv target/kika-disney-pcp-0.0.1-SNAPSHOT.jar application.jar
+      - echo "Moved JAR to root as application.jar"
+      - ls -lh application.jar
 
 artifacts:
   files:
-    - target/kika-disney-pcp-0.0.1-SNAPSHOT.jar
-  name: BuildArtifact
+    - application.jar
 
 cache:
   paths:
