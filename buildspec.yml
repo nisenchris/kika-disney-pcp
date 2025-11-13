@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+      nodejs: 22
+  pre_build:
+    commands:
+      - echo Installing dependencies...
+      - echo Build started on `date`
+  build:
+    commands:
+      - echo Building production JAR...
+      - export LD_CLIENT_ID=$LD_CLIENT_ID
+      - ./mvnw clean package -Pprod -Dmaven.test.skip=true -DskipTests=true
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - ls -lh target/*.jar
+
+artifacts:
+  files:
+    - target/kika-disney-pcp-0.0.1-SNAPSHOT.jar
+  name: BuildArtifact
+
+cache:
+  paths:
+    - '/root/.m2/**/*'
+    - 'node_modules/**/*'
+
